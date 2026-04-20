@@ -1204,3 +1204,42 @@ html, body {
     width: 100%;
   }
 }
+
+/* ════════════════════════════════
+   INSTALL LAYOUT
+════════════════════════════════ */
+.install-layout {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 24px;
+  align-items: start;
+  width: 100%;
+}
+
+/* Terminal full width always */
+.terminal {
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  word-break: break-all;
+}
+
+.terminal-text, .terminal-line {
+  word-break: break-all;
+  white-space: pre-wrap;
+  max-width: 100%;
+}
+
+/* Mobile: stack form on top, terminal below */
+@media (max-width: 768px) {
+  .install-layout {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
+
+  /* Terminal jadi lebih pendek di mobile */
+  .terminal {
+    height: 220px;
+    font-size: 11px;
+  }
+}
