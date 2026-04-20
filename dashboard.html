@@ -5,400 +5,152 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Dashboard // NEXORA</title>
   <link rel="stylesheet" href="css/style.css">
-  <style>
-    /* Page sections */
-    .page-section { display: none; }
-    .page-section.active { display: block; animation: fadeIn 0.3s ease; }
-
-    /* Install steps */
-    .steps {
-      display: flex;
-      gap: 0;
-      margin-bottom: 28px;
-    }
-
-    .step {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 16px;
-      background: rgba(0,0,0,0.2);
-      border: 1px solid var(--border);
-      font-size: 12px;
-      color: var(--text-muted);
-      transition: all 0.3s;
-      position: relative;
-    }
-
-    .step:not(:last-child)::after {
-      content: '›';
-      position: absolute;
-      right: -1px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--border);
-      z-index: 1;
-      font-size: 18px;
-    }
-
-    .step:first-child { border-radius: 8px 0 0 8px; }
-    .step:last-child { border-radius: 0 8px 8px 0; }
-
-    .step.active {
-      background: var(--neon-glow);
-      border-color: var(--border-active);
-      color: var(--neon);
-    }
-
-    .step.done {
-      background: var(--success-dim);
-      border-color: rgba(0,255,136,0.2);
-      color: var(--success);
-    }
-
-    .step-num {
-      width: 22px; height: 22px;
-      border-radius: 50%;
-      border: 1px solid currentColor;
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--font-mono);
-      font-size: 10px;
-      flex-shrink: 0;
-    }
-
-    /* Status bar */
-    .install-status-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-
-    .progress-info {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    #progress-label {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--text-secondary);
-    }
-
-    #progress-pct {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--neon);
-    }
-
-    /* Mode selector */
-    .mode-selector {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .mode-card {
-      position: relative;
-    }
-
-    .mode-card input {
-      position: absolute;
-      opacity: 0;
-      width: 0; height: 0;
-    }
-
-    .mode-label {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      padding: 16px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .mode-label:hover {
-      border-color: rgba(0,212,255,0.3);
-      background: var(--neon-glow);
-    }
-
-    .mode-card input:checked + .mode-label {
-      border-color: var(--neon);
-      background: var(--neon-glow);
-      box-shadow: 0 0 15px rgba(0,212,255,0.1);
-    }
-
-    .mode-title {
-      font-family: var(--font-mono);
-      font-size: 13px;
-      color: var(--neon);
-      font-weight: 600;
-    }
-
-    .mode-desc { font-size: 11px; color: var(--text-muted); }
-    .mode-badge {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      padding: 2px 6px;
-      border-radius: 3px;
-      background: rgba(0,212,255,0.1);
-      color: var(--neon-dim);
-      border: 1px solid var(--border);
-      width: fit-content;
-    }
-
-    /* Swings panel */
-    .swings-info {
-      background: rgba(0,212,255,0.04);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 20px;
-    }
-
-    .swings-info-title {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--neon);
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
-
-    .swings-info p {
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.6;
-    }
-  </style>
 </head>
 <body>
 
 <!-- NAVBAR -->
 <nav class="navbar">
-  <button class="nav-hamburger" id="hamburger" onclick="toggleSidebar()" aria-label="Menu">
-    <span></span><span></span><span></span>
-  </button>
-  <a class="nav-brand" href="#">
+  <div class="nav-brand">
     <div class="nav-logo">
-      <svg width="18" height="18" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M16 4L28 10V22L16 28L4 22V10L16 4Z"/>
-        <circle cx="16" cy="16" r="4" fill="currentColor" opacity="0.8"/>
+        <circle cx="16" cy="16" r="4" fill="currentColor"/>
       </svg>
     </div>
     <span class="nav-title">NEXORA</span>
-  </a>
-  <div class="nav-user">
+  </div>
+  <div class="nav-right">
     <span class="nav-username" id="nav-username">-</span>
     <span class="nav-badge badge-member" id="nav-role-badge">member</span>
-    <button class="btn btn-logout btn-sm" onclick="logout()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-      Logout
+    <button class="btn-logout" onclick="logout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      <span>Logout</span>
     </button>
   </div>
 </nav>
 
-<!-- LAYOUT -->
 <div class="layout">
-  <!-- SIDEBAR -->
-  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <!-- SIDEBAR (desktop) -->
   <aside class="sidebar" id="sidebar">
-    <div class="sidebar-section">
-      <div class="sidebar-label">Navigation</div>
-      <a class="sidebar-item active" onclick="showSection('overview')" id="nav-overview">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        Overview
-      </a>
-      <a class="sidebar-item" onclick="showSection('install')" id="nav-install">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-        Install Panel
-      </a>
-      <a class="sidebar-item" onclick="showSection('swings')" id="nav-swings">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Start Wings
-      </a>
-      <a class="sidebar-item" onclick="showSection('logs')" id="nav-logs">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-        My History
-      </a>
-    </div>
+    <span class="sidebar-label">Member Panel</span>
+    <button class="sidebar-item active" id="nav-overview" onclick="showSection('overview')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Home
+    </button>
+    <button class="sidebar-item" id="nav-install" onclick="showSection('install')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Install Panel
+    </button>
+    <button class="sidebar-item" id="nav-swings" onclick="showSection('swings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Start Wings
+    </button>
+    <button class="sidebar-item" id="nav-logs" onclick="showSection('logs')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      My Logs
+    </button>
   </aside>
 
   <!-- MAIN -->
   <main class="main-content">
 
-    <!-- ─── OVERVIEW ─── -->
+    <!-- OVERVIEW -->
     <div class="page-section active" id="section-overview">
-      <div class="mb-24">
-        <h2 style="font-family:var(--font-mono);font-size:18px;color:var(--text-primary);margin-bottom:6px;">
-          Welcome back, <span id="welcome-name" style="color:var(--neon)">-</span>
-        </h2>
-        <p class="text-muted">Pterodactyl Panel Installer Dashboard</p>
+      <div class="page-header">
+        <h1 class="page-title">Welcome, <span id="welcome-name">-</span></h1>
+        <p class="page-subtitle">Your installation dashboard</p>
       </div>
-
-      <!-- Stats -->
       <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-value" id="stat-install-count">0</div>
-          <div class="stat-label">Panels Installed</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="stat-remaining">-</div>
-          <div class="stat-label">Installs Remaining</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value text-success" id="stat-access-level" style="font-size:16px;">-</div>
-          <div class="stat-label">Access Level</div>
-        </div>
+        <div class="stat-card"><div class="stat-value" id="stat-install-count">0</div><div class="stat-label">Installs Done</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-remaining">1</div><div class="stat-label">Remaining</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-access-level">-</div><div class="stat-label">Access Level</div></div>
       </div>
-
-      <!-- Limit warning -->
-      <div class="limit-indicator" id="limit-warning" style="display:none;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        <span>Free install quota used. Contact admin to upgrade your access.</span>
-      </div>
-
-      <!-- Quick actions -->
-      <div class="card mb-24">
+      <div class="card">
         <div class="card-header">
           <span class="card-title">Quick Actions</span>
         </div>
-        <div class="flex gap-12" style="flex-wrap:wrap;">
-          <button class="btn btn-primary" onclick="showSection('install')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
-            Install New Panel
-          </button>
-          <button class="btn btn-primary" onclick="showSection('swings')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-            Start Wings
-          </button>
-          <button class="btn btn-primary" onclick="showSection('logs')">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
-            View History
-          </button>
-        </div>
-      </div>
-
-      <!-- Info -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">About This Tool</span>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-          <div>
-            <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;margin-bottom:12px;">
-              NEXORA automates the full Pterodactyl Panel + Wings installation process via SSH.
-              Just fill in your VPS credentials and domain — the rest is handled automatically.
-            </p>
-            <div class="alert alert-info" style="font-size:12px;">
-              <span>ℹ Ensure DNS A records are pointed to your VPS IP before installing.</span>
-            </div>
-          </div>
-          <div>
-            <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);margin-bottom:12px;">INSTALL INCLUDES:</div>
-            <div style="font-size:13px;color:var(--text-secondary);display:flex;flex-direction:column;gap:8px;">
-              <div class="flex gap-8 items-center"><span style="color:var(--success);">✓</span> Pterodactyl Panel</div>
-              <div class="flex gap-8 items-center"><span style="color:var(--success);">✓</span> Wings (daemon)</div>
-              <div class="flex gap-8 items-center"><span style="color:var(--success);">✓</span> Auto node config + activation</div>
-              <div class="flex gap-8 items-center"><span style="color:var(--success);">✓</span> Port allocations (Panel or MC)</div>
-              <div class="flex gap-8 items-center"><span style="color:var(--success);">✓</span> SSL via Let's Encrypt</div>
-            </div>
-          </div>
+        <div class="flex gap-8" style="flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="showSection('install')">Install Panel</button>
+          <button class="btn btn-outline" onclick="showSection('swings')">Start Wings</button>
+          <button class="btn btn-outline" onclick="showSection('logs')">View Logs</button>
         </div>
       </div>
     </div>
 
-    <!-- ─── INSTALL PANEL ─── -->
+    <!-- INSTALL -->
     <div class="page-section" id="section-install">
-      <div class="mb-24">
-        <h2 style="font-family:var(--font-mono);font-size:18px;color:var(--text-primary);margin-bottom:6px;">Install Panel</h2>
-        <p class="text-muted">Automated Pterodactyl Panel + Wings installation</p>
+      <div class="page-header">
+        <h1 class="page-title">Install Panel</h1>
+        <p class="page-subtitle">Pterodactyl Panel + Wings auto installer</p>
       </div>
-
+      <div id="install-limit-banner"></div>
       <div class="install-layout">
-
         <!-- FORM -->
-        <div class="card" id="install-form">
-          <!-- Mode select -->
+        <div class="card">
           <div class="form-group">
             <label class="form-label">Install Mode</label>
-            <div class="mode-selector">
+            <div class="install-mode-selector">
               <div class="mode-card">
                 <input type="radio" name="install-mode" id="mode-standard" value="standard" checked onchange="toggleAlias(false)">
                 <label class="mode-label" for="mode-standard">
                   <span class="mode-title">STANDARD</span>
-                  <span class="mode-desc">Domain node sebagai alias alokasi</span>
-                  <span class="mode-badge">DEFAULT</span>
+                  <span class="mode-desc">Domain node sebagai alias</span>
                 </label>
               </div>
               <div class="mode-card">
                 <input type="radio" name="install-mode" id="mode-alias" value="alias" onchange="toggleAlias(true)">
                 <label class="mode-label" for="mode-alias">
                   <span class="mode-title">CUSTOM ALIAS</span>
-                  <span class="mode-desc">IP/domain custom untuk alokasi</span>
-                  <span class="mode-badge">ADVANCED</span>
+                  <span class="mode-desc">IP/domain custom alias</span>
                 </label>
               </div>
             </div>
           </div>
 
-          <div class="divider"><span class="divider-text">VPS CREDENTIALS</span></div>
-
+          <div class="divider"><span class="divider-text">VPS Credentials</span></div>
           <div class="form-group">
             <label class="form-label">IP VPS</label>
-            <input type="text" class="form-input install-input" id="input-ip" placeholder="123.45.67.89">
+            <input type="text" class="form-input" id="input-ip" placeholder="123.45.67.89">
           </div>
           <div class="form-group">
             <label class="form-label">Root Password</label>
-            <input type="password" class="form-input install-input" id="input-pass" placeholder="••••••••••">
+            <input type="password" class="form-input" id="input-pass" placeholder="••••••••••">
           </div>
 
-          <div class="divider"><span class="divider-text">DOMAIN CONFIG</span></div>
-
+          <div class="divider"><span class="divider-text">Domain</span></div>
           <div class="form-group">
             <label class="form-label">Panel Domain</label>
-            <input type="text" class="form-input install-input" id="input-domain-panel" placeholder="panel.yourdomain.com">
-            <p class="form-hint">Must have A record → VPS IP</p>
+            <input type="text" class="form-input" id="input-domain-panel" placeholder="panel.yourdomain.com">
           </div>
           <div class="form-group">
             <label class="form-label">Node Domain</label>
-            <input type="text" class="form-input install-input" id="input-domain-node" placeholder="node.yourdomain.com">
-            <p class="form-hint">Must have A record → VPS IP</p>
+            <input type="text" class="form-input" id="input-domain-node" placeholder="node.yourdomain.com">
           </div>
-
-          <!-- Alias (hidden by default) -->
           <div class="form-group" id="alias-group" style="display:none;">
             <label class="form-label">Custom IP Alias</label>
-            <input type="text" class="form-input install-input" id="input-alias" placeholder="node.yourdomain.com or 1.2.3.4">
-            <p class="form-hint">Custom label for allocation IP</p>
+            <input type="text" class="form-input" id="input-alias" placeholder="node.yourdomain.com or IP">
           </div>
 
-          <div class="divider"><span class="divider-text">RESOURCES</span></div>
-
+          <div class="divider"><span class="divider-text">Resources</span></div>
           <div class="form-group">
             <label class="form-label">RAM VPS</label>
-            <select class="form-input form-select install-input" id="input-ram">
-              <option value="4096">4 GB (4096 MB)</option>
-              <option value="8192" selected>8 GB (8192 MB)</option>
-              <option value="16384">16 GB (16384 MB)</option>
-              <option value="32768">32 GB (32768 MB)</option>
-              <option value="65536">64 GB (65536 MB)</option>
+            <select class="form-input form-select" id="input-ram">
+              <option value="4096">4 GB</option>
+              <option value="8192" selected>8 GB</option>
+              <option value="16384">16 GB</option>
+              <option value="32768">32 GB</option>
+              <option value="65536">64 GB</option>
             </select>
           </div>
 
-          <div class="divider"><span class="divider-text">PORT ALLOCATION</span></div>
-
+          <div class="divider"><span class="divider-text">Port Allocation</span></div>
           <div class="form-group">
             <label class="form-label">Port Type</label>
             <div class="port-selector">
               <div class="port-option">
                 <input type="radio" name="port-type" id="port-panel" value="panel" checked>
                 <label class="port-label" for="port-panel">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                   <span class="port-label-title">PANEL</span>
                   <span class="port-label-desc">2000 – 5000</span>
                 </label>
@@ -406,7 +158,6 @@
               <div class="port-option">
                 <input type="radio" name="port-type" id="port-mc" value="minecraft">
                 <label class="port-label" for="port-mc">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                   <span class="port-label-title">MINECRAFT</span>
                   <span class="port-label-desc">19110 – 20000</span>
                 </label>
@@ -414,109 +165,80 @@
             </div>
           </div>
 
-          <button class="btn btn-solid btn-full" id="btn-install" onclick="launchInstall()" style="margin-top:8px;font-size:14px;padding:14px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+          <button class="btn btn-solid btn-full" id="btn-install" onclick="launchInstall()" style="margin-top:12px;padding:13px;">
             LAUNCH INSTALL
           </button>
         </div>
 
         <!-- TERMINAL -->
         <div>
-          <div class="card mb-16">
-            <div class="install-status-bar">
-              <span class="card-title">Live Output</span>
-              <div class="flex gap-12" style="align-items:center;">
-                <span id="install-status" class="status status-pending">● Idle</span>
-                <span id="progress-pct" style="font-family:var(--font-mono);font-size:12px;color:var(--neon);">0%</span>
+          <div class="card mb-12">
+            <div class="flex-between mb-12">
+              <span class="card-title" style="margin-bottom:0;">Live Output</span>
+              <div class="flex gap-8" style="align-items:center;">
+                <span id="install-status" class="status status-pending">Idle</span>
+                <span id="progress-pct" class="text-mono" style="font-size:12px;color:var(--gray-400);">0%</span>
               </div>
             </div>
-            <div class="progress-bar mb-16">
+            <div class="progress-bar">
               <div class="progress-fill" id="progress-fill" style="width:0%"></div>
             </div>
-            <span id="progress-label" class="text-muted" style="font-size:12px;font-family:var(--font-mono);">Waiting for input...</span>
+            <span id="progress-label" class="text-muted" style="font-size:12px;margin-top:6px;display:block;">Waiting...</span>
           </div>
-
           <div class="terminal" id="terminal">
             <div class="terminal-line">
               <span class="terminal-prefix">[SYS]</span>
-              <span class="terminal-info">NEXORA Installer ready. Fill in credentials and click LAUNCH INSTALL.</span>
+              <span class="terminal-info">NEXORA Installer ready.</span>
             </div>
-          </div>
-
-          <div class="alert alert-warning mt-16" style="font-size:12px;">
-            <span>⏱ Installation takes 5–15 minutes. Do not close this tab during installation.</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ─── SWINGS ─── -->
+    <!-- WINGS -->
     <div class="page-section" id="section-swings">
-      <div class="mb-24">
-        <h2 style="font-family:var(--font-mono);font-size:18px;color:var(--text-primary);margin-bottom:6px;">Start Wings</h2>
-        <p class="text-muted">Configure and restart Wings daemon on existing panels</p>
+      <div class="page-header">
+        <h1 class="page-title">Start Wings</h1>
+        <p class="page-subtitle">Activate Wings dengan token dari panel</p>
       </div>
-
-      <div class="install-layout">
+      <div style="max-width:500px;">
         <div class="card">
-          <div class="swings-info">
-            <div class="swings-info-title">// ABOUT SWINGS</div>
-            <p>Use this when Wings is down or after a fresh install to configure Wings using a panel token. The daemon will be configured and started automatically.</p>
-          </div>
-
           <div class="form-group">
             <label class="form-label">IP VPS</label>
-            <input type="text" class="form-input install-input" id="swings-ip" placeholder="123.45.67.89">
+            <input type="text" class="form-input" id="swings-ip" placeholder="123.45.67.89">
           </div>
           <div class="form-group">
             <label class="form-label">Root Password</label>
-            <input type="password" class="form-input install-input" id="swings-pass" placeholder="••••••••••">
+            <input type="password" class="form-input" id="swings-pass" placeholder="••••••••••">
           </div>
           <div class="form-group">
-            <label class="form-label">Wings Token</label>
-            <input type="text" class="form-input install-input" id="swings-token" placeholder="token from panel node page">
-            <p class="form-hint">Get from Panel → Admin → Nodes → [Node] → Config</p>
+            <label class="form-label">Wings Token (dari panel)</label>
+            <textarea class="form-input" id="swings-token" rows="4" placeholder="Paste wings token / config here..."></textarea>
           </div>
-
-          <button class="btn btn-solid btn-full" id="btn-swings" onclick="launchSwings()" style="margin-top:8px;font-size:14px;padding:14px;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <button class="btn btn-solid btn-full" id="btn-swings" onclick="launchSwings()" style="padding:13px;">
             START WINGS
           </button>
         </div>
-
-        <div class="terminal" id="swings-terminal" style="height:300px;">
+        <div class="terminal mt-12" id="swings-terminal" style="height:180px;">
           <div class="terminal-line">
             <span class="terminal-prefix">[SYS]</span>
-            <span class="terminal-info">Wings control ready. Enter credentials and click START WINGS.</span>
+            <span class="terminal-info">Ready to start Wings.</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ─── LOGS ─── -->
+    <!-- LOGS -->
     <div class="page-section" id="section-logs">
-      <div class="mb-24 flex-between">
-        <div>
-          <h2 style="font-family:var(--font-mono);font-size:18px;color:var(--text-primary);margin-bottom:6px;">My History</h2>
-          <p class="text-muted">Your install logs and activity</p>
-        </div>
+      <div class="page-header">
+        <h1 class="page-title">My Logs</h1>
+        <p class="page-subtitle">Your installation history</p>
       </div>
-
       <div class="card">
         <div class="table-wrapper">
           <table>
-            <thead>
-              <tr>
-                <th>IP VPS</th>
-                <th>Panel Domain</th>
-                <th>Status</th>
-                <th>Relative</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody id="my-logs-body">
-              <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:24px;">No install history yet</td></tr>
-            </tbody>
+            <thead><tr><th>Time</th><th>IP VPS</th><th>Domain Panel</th><th>Domain Node</th><th>Port</th><th>Status</th></tr></thead>
+            <tbody id="member-logs-body"></tbody>
           </table>
         </div>
       </div>
@@ -525,35 +247,30 @@
   </main>
 </div>
 
-<!-- SUCCESS MODAL -->
-<div class="modal-overlay" id="success-modal">
-  <div class="modal">
-    <div class="modal-title">✓ Installation Complete</div>
-    <div class="alert alert-success" style="margin-bottom:20px;">
-      <span>Panel installed and node is active. You can now use your panel!</span>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Panel URL</label>
-      <div class="form-input" style="user-select:all;" id="modal-domain">-</div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Node Domain</label>
-      <div class="form-input" id="modal-node">-</div>
-    </div>
-    <div class="alert alert-warning">
-      <span>Default login: username <b>admin</b> / password <b>admin</b>. Change immediately!</span>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-solid" onclick="document.getElementById('success-modal').classList.remove('active')">CLOSE</button>
-    </div>
-  </div>
-</div>
+<!-- BOTTOM NAV (mobile) -->
+<nav class="bottom-nav">
+  <button class="bottom-nav-item active" id="bnav-overview" onclick="showSection('overview')">
+    <div class="bnav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+    <span>Home</span>
+  </button>
+  <button class="bottom-nav-item" id="bnav-install" onclick="showSection('install')">
+    <div class="bnav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></div>
+    <span>Install</span>
+  </button>
+  <button class="bottom-nav-item" id="bnav-swings" onclick="showSection('swings')">
+    <div class="bnav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+    <span>Wings</span>
+  </button>
+  <button class="bottom-nav-item" id="bnav-logs" onclick="showSection('logs')">
+    <div class="bnav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+    <span>Logs</span>
+  </button>
+</nav>
 
 <script src="js/auth.js"></script>
 <script src="js/app.js"></script>
 <script src="js/install.js"></script>
 <script>
-  // Guard & init
   const session = requireAuth();
   if (session) {
     renderNavUser();
@@ -561,16 +278,14 @@
     renderMemberStats();
     renderMemberLogs();
     terminal.init('terminal');
-  }
 
-  // Section nav
-  function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebar-overlay');
-    const hamburger = document.getElementById('hamburger');
-    sidebar.classList.toggle('open');
-    overlay.classList.toggle('active');
-    hamburger.classList.toggle('open');
+    // Show limit banner
+    const count = getInstallCount(session.id);
+    const isLimited = session.accessLevel === 'limited';
+    if (isLimited && count >= 1) {
+      document.getElementById('install-limit-banner').innerHTML =
+        `<div class="alert alert-warning mb-16">⚠️ You have used your free install quota. Contact admin for unlimited access.</div>`;
+    }
   }
 
   function showSection(id) {
@@ -583,11 +298,13 @@
     if (id === 'logs') renderMemberLogs();
   }
 
-  // Launch install
+  function toggleAlias(show) {
+    document.getElementById('alias-group').style.display = show ? 'block' : 'none';
+  }
+
   function launchInstall() {
     const mode = document.querySelector('input[name="install-mode"]:checked').value;
     const portType = document.querySelector('input[name="port-type"]:checked').value;
-
     startInstall({
       ipvps: document.getElementById('input-ip').value.trim(),
       password: document.getElementById('input-pass').value,
@@ -597,21 +314,27 @@
       ipAlias: document.getElementById('input-alias').value.trim(),
       portType,
       withAlias: mode === 'alias'
+    }, {
+      btnId: 'btn-install',
+      terminalId: 'terminal',
+      statusId: 'install-status',
+      progressFillId: 'progress-fill',
+      progressPctId: 'progress-pct',
+      progressLabelId: 'progress-label',
+      onDone: (data) => { addLog({ ...data, username: session.username, status: 'success' }); renderMemberStats(); }
     });
   }
 
-  // Launch swings
   async function launchSwings() {
-    const ip = document.getElementById('swings-ip').value.trim();
-    const pass = document.getElementById('swings-pass').value;
+    const ip    = document.getElementById('swings-ip').value.trim();
+    const pass  = document.getElementById('swings-pass').value;
     const token = document.getElementById('swings-token').value.trim();
-
     if (!ip || !pass || !token) { alert('All fields required!'); return; }
 
     const t = {
       el: document.getElementById('swings-terminal'),
-      line(text, type = 'text') {
-        const ts = new Date().toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+      line(text, type='text') {
+        const ts = new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
         const line = document.createElement('div');
         line.className = 'terminal-line';
         line.innerHTML = `<span class="terminal-prefix">[${ts}]</span><span class="terminal-${type}">${text}</span>`;
@@ -621,88 +344,37 @@
     };
 
     t.line('Starting Wings configuration...', 'info');
-
     const btn = document.getElementById('btn-swings');
-    btn.disabled = true;
-    btn.textContent = 'RUNNING...';
+    btn.disabled = true; btn.textContent = 'RUNNING...';
 
     try {
       const res = await fetch(`${API_BASE}/api/swings`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ipvps: ip, password: pass, token }),
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ipvps:ip, password:pass, token}),
         signal: AbortSignal.timeout(120000)
       });
-
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let buf = '';
-
       while (true) {
-        const { done, value } = await reader.read();
+        const {done, value} = await reader.read();
         if (done) break;
-        buf += decoder.decode(value, { stream: true });
-        const lines = buf.split('\n');
-        buf = lines.pop();
+        buf += decoder.decode(value, {stream:true});
+        const lines = buf.split('\n'); buf = lines.pop();
         for (const line of lines) {
           if (!line.startsWith('data:')) continue;
           try {
             const ev = JSON.parse(line.slice(5));
-            if (ev.type === 'log') t.line(ev.message, 'text');
-            else if (ev.type === 'done') t.line('✓ Wings started successfully!', 'success');
-            else if (ev.type === 'error') t.line('✗ ' + ev.message, 'error');
+            if (ev.type === 'log')  t.line(ev.message, 'text');
+            if (ev.type === 'done') t.line('✓ Wings started!', 'success');
+            if (ev.type === 'error') t.line('✗ ' + ev.message, 'error');
           } catch {}
         }
       }
+    } catch(err) { t.line('✗ ' + err.message, 'error'); }
 
-    } catch (err) {
-      t.line('✗ ' + err.message, 'error');
-    }
-
-    btn.disabled = false;
-    btn.textContent = 'START WINGS';
+    btn.disabled = false; btn.textContent = 'START WINGS';
   }
 </script>
-
-<!-- BOTTOM NAV (mobile only) -->
-<nav class="bottom-nav" id="bottom-nav">
-  <button class="bottom-nav-item active" id="bnav-overview" onclick="showSection('overview')">
-    <div class="bnav-icon-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
-      </svg>
-    </div>
-    <span>Home</span>
-  </button>
-  <button class="bottom-nav-item" id="bnav-install" onclick="showSection('install')">
-    <div class="bnav-icon-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"/>
-        <line x1="12" y1="8" x2="12" y2="16"/>
-        <line x1="8" y1="12" x2="16" y2="12"/>
-      </svg>
-    </div>
-    <span>Install</span>
-  </button>
-  <button class="bottom-nav-item" id="bnav-swings" onclick="showSection('swings')">
-    <div class="bnav-icon-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polygon points="5 3 19 12 5 21 5 3"/>
-      </svg>
-    </div>
-    <span>Wings</span>
-  </button>
-  <button class="bottom-nav-item" id="bnav-logs" onclick="showSection('logs')">
-    <div class="bnav-icon-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-        <polyline points="14 2 14 8 20 8"/>
-        <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
-      </svg>
-    </div>
-    <span>Logs</span>
-  </button>
-</nav>
 </body>
 </html>
