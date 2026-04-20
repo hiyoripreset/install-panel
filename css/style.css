@@ -1127,3 +1127,80 @@ html, body {
   .mode-desc { font-size: 11px; }
   .mode-label { padding: 10px 10px; }
 }
+
+/* ════════════════════════════════
+   MOBILE OVERFLOW FIX v3
+════════════════════════════════ */
+@media (max-width: 768px) {
+  html {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  body {
+    width: 100%;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  .navbar {
+    left: 0;
+    right: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .layout {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .main-content {
+    width: 100%;
+    padding: 16px 14px 90px 14px;
+    margin-left: 0 !important;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  .card {
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  /* Install mode: stack vertical biar lebih enak di HP */
+  .install-mode-selector {
+    grid-template-columns: 1fr !important;
+  }
+
+  .page-section {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Remove any negative margins */
+  [class*="col"], [class*="grid"], [class*="row"] {
+    max-width: 100%;
+  }
+}
+
+/* ════════════════════════════════
+   FINAL MOBILE WIDTH LOCK
+════════════════════════════════ */
+html, body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Remove scrollbar gap on mobile */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar { width: 0; height: 0; }
+
+  /* Ensure .layout doesn't add extra width */
+  .layout {
+    display: block;
+    width: 100%;
+  }
+}
