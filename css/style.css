@@ -836,3 +836,112 @@ td .mono { font-family: var(--font-mono); font-size: 13px; color: var(--text-pri
   .stats-grid { grid-template-columns: 1fr; }
   .auth-box { padding: 24px 18px; }
 }
+
+/* ════════════════════════════════
+   BOTTOM NAV BAR (Mobile)
+════════════════════════════════ */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(22, 27, 39, 0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+  justify-content: space-around;
+  align-items: stretch;
+  gap: 2px;
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 1;
+  padding: 8px 4px;
+  border-radius: 12px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  transition: all 0.2s;
+  position: relative;
+  font-family: var(--font-main);
+  -webkit-tap-highlight-color: transparent;
+  min-width: 0;
+}
+
+.bottom-nav-item svg {
+  width: 22px; height: 22px;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.bottom-nav-item span {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.bottom-nav-item:hover {
+  color: var(--text-secondary);
+  background: rgba(255,255,255,0.04);
+}
+
+.bottom-nav-item.active {
+  color: var(--accent);
+}
+
+.bottom-nav-item.active svg {
+  transform: translateY(-1px);
+}
+
+/* Glow indicator */
+.bottom-nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px; height: 3px;
+  background: var(--accent);
+  border-radius: 0 0 3px 3px;
+  box-shadow: 0 0 10px var(--accent), 0 0 20px rgba(91,141,238,0.4);
+}
+
+/* Glow pill under icon */
+.bottom-nav-item.active .bnav-icon-wrap {
+  background: rgba(91,141,238,0.12);
+  border-radius: 10px;
+  padding: 4px 12px;
+}
+
+.bnav-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  border-radius: 10px;
+  transition: all 0.2s;
+}
+
+/* ── show on mobile ── */
+@media (max-width: 768px) {
+  .bottom-nav { display: flex; }
+
+  /* Push content above bottom nav */
+  .main-content { padding-bottom: 80px; }
+
+  /* Hide hamburger on mobile since we have bottom nav */
+  .nav-hamburger { display: none; }
+
+  /* Hide sidebar on mobile entirely (use bottom nav) */
+  .sidebar { display: none !important; }
+  .sidebar-overlay { display: none !important; }
+}
