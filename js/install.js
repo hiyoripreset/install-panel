@@ -2,7 +2,7 @@
 // Backend API URL - ubah sesuai deploy Railway/Render kamu
 const API_BASE = window.location.hostname === 'localhost'
   ? 'http://localhost:3000'
-  : 'https://your-backend.railway.app'; // GANTI INI
+  : 'https://install-panel-production.up.railway.app'; // GANTI INI
 
 let installSocket = null;
 let installActive = false;
