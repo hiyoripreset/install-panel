@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin // NEXORA</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .page-section { display: none; }
+    .page-section.active { display: block; animation: fadeIn 0.3s ease; }
+
+    .admin-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    /* Search input */
+    .search-input {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 9px 14px;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      outline: none;
+      transition: all 0.2s;
+      width: 240px;
+    }
+
+    .search-input:focus {
+      border-color: var(--neon-dim);
+      box-shadow: 0 0 0 3px rgba(0,212,255,0.08);
+    }
+
+    .search-input::placeholder { color: var(--text-muted); }
+
+    /* Admin alert */
+    #admin-alert {
+      display: none;
+      margin-bottom: 16px;
+    }
+
+    /* Scrollable table */
+    .table-scroll {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    /* Sticky thead */
+    .table-scroll thead {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--bg-card);
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a class="nav-brand" href="#">
+    <div class="nav-logo">
+      <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
+        <path d="M16 4L28 10V22L16 28L4 22V10L16 4Z" stroke="#00d4ff" stroke-width="1.5" fill="none"/>
+        <circle cx="16" cy="16" r="4" fill="#00d4ff" opacity="0.8"/>
+      </svg>
+    </div>
+    <span class="nav-title">NEXORA</span>
+  </a>
+  <div class="nav-user">
+    <span id="nav-username">-</span>
+    <span class="nav-badge badge-admin" id="nav-role-badge">admin</span>
+    <button class="btn btn-sm" style="color:var(--text-muted);border-color:transparent;" onclick="logout()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      Logout
+    </button>
+  </div>
+</nav>
+
+<!-- LAYOUT -->
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Admin Panel</div>
+      <a class="sidebar-item active" onclick="showSection('overview')" id="nav-overview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Overview
+      </a>
+      <a class="sidebar-item" onclick="showSection('users')" id="nav-users">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Users
+      </a>
+      <a class="sidebar-item" onclick="showSection('logs')" id="nav-logs">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+        Install Logs
+      </a>
+      <a class="sidebar-item" onclick="showSection('install')" id="nav-install">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+        Install Panel
+      </a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <!-- ─── OVERVIEW ─── -->
+    <div class="page-section active" id="section-overview">
+      <div class="admin-header">
+        <div>
+          <h2 style="font-family:var(--font-mono);font-size:18px;color:var(--text-primary);margin-bottom:6px;">
+            Admin Overview
+          </h2>
+          <p class="text-muted">System statistics and quick management</p>
+        </div>
+      </div>
+
+      <div id="admin-alert"></div>
+
+      <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-total-users">0</div>
+          <div class="stat-label">Total Members</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value text-success" id="stat-unlimited-users">0</div>
+          <div class="stat-label">Full Access Users</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-total-installs">0</div>
+          <div class="stat-label">Successful Installs</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value text-neon" id="stat-logs-count">0</div>
+          <div class="stat-label">Total Log Entries</div>
+        </div>
+      </div>
+
+      <!-- Recent logs -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Recent Activity</span>
+          <button class="btn btn-sm btn-primary" onclick="showSection('logs')">View All</button>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>User</th>
+                <th>IP VPS</th>
+                <th>Domain</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="recent-logs-body">
+              <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:20px;">No activity yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── USERS ─── -->
+    <div class="page-section" id="section-users">
+      <div class="admin-header">
+        <div>
+          <h2 style="font-family:var(--font-mono);font-size:18px;color:var(--text-primary);margin-bottom:6px;">User Management</h2>
+          <p class="text-muted">Manage members, access levels, and accounts</p>
+        </div>
+        <button class="btn btn-solid" onclick="document.getElementById('add-user-modal').classList.add('active')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add User
+        </button>
+      </div>
+
+      <div id="admin-alert"></div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">All Users</span>
+          <input class="search-input" placeholder="Search username..." oninput="filterUsers(this.value)">
+        </div>
+        <div class="table-wrapper table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Access</th>
+                <th>Status</th>
+                <th>Installs</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="users-body">
+              <tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:24px;">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── LOGS ─── -->
+    <div class="page-section" id="section-logs">
+      <div class="admin-header">
+        <div>
+          <h2 style="font-family:var(--font-mono);font-size:18px;color:var(--text-primary);margin-bottom:6px;">Install Logs</h2>
+          <p class="text-muted">All installation activity across all users</p>
+        </div>
+        <div class="flex gap-12">
+          <input class="search-input" id="log-search" placeholder="Search user/IP/domain..." oninput="filterLogs()">
+          <button class="btn btn-danger btn-sm" onclick="clearLogs()">Clear All</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-wrapper table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>User</th>
+                <th>IP VPS</th>
+                <th>Panel Domain</th>
+                <th>Status</th>
+                <th>Error</th>
+              </tr>
+            </thead>
+            <tbody id="all-logs-body">
+              <tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px;">No logs yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── INSTALL (admin can also install) ─── -->
+    <div class="page-section" id="section-install">
+      <div class="mb-24">
+        <h2 style="font-family:var(--font-mono);font-size:18px;color:var(--text-primary);margin-bottom:6px;">Install Panel</h2>
+        <p class="text-muted">Admin install — no quota limits</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start;">
+        <div class="card" id="install-form">
+          <div class="form-group">
+            <label class="form-label">Install Mode</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+              <div class="mode-card">
+                <input type="radio" name="install-mode" id="mode-standard" value="standard" checked onchange="toggleAlias(false)">
+                <label class="mode-label" for="mode-standard">
+                  <span class="mode-title">STANDARD</span>
+                  <span class="mode-desc">Domain node sebagai alias</span>
+                </label>
+              </div>
+              <div class="mode-card">
+                <input type="radio" name="install-mode" id="mode-alias" value="alias" onchange="toggleAlias(true)">
+                <label class="mode-label" for="mode-alias">
+                  <span class="mode-title">CUSTOM ALIAS</span>
+                  <span class="mode-desc">IP/domain custom alias</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"><span class="divider-text">VPS CREDENTIALS</span></div>
+          <div class="form-group">
+            <label class="form-label">IP VPS</label>
+            <input type="text" class="form-input install-input" id="input-ip" placeholder="123.45.67.89">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Root Password</label>
+            <input type="password" class="form-input install-input" id="input-pass" placeholder="••••••••••">
+          </div>
+
+          <div class="divider"><span class="divider-text">DOMAIN</span></div>
+          <div class="form-group">
+            <label class="form-label">Panel Domain</label>
+            <input type="text" class="form-input install-input" id="input-domain-panel" placeholder="panel.yourdomain.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Node Domain</label>
+            <input type="text" class="form-input install-input" id="input-domain-node" placeholder="node.yourdomain.com">
+          </div>
+          <div class="form-group" id="alias-group" style="display:none;">
+            <label class="form-label">Custom IP Alias</label>
+            <input type="text" class="form-input install-input" id="input-alias" placeholder="node.yourdomain.com or IP">
+          </div>
+
+          <div class="divider"><span class="divider-text">RESOURCES</span></div>
+          <div class="form-group">
+            <label class="form-label">RAM VPS</label>
+            <select class="form-input form-select install-input" id="input-ram">
+              <option value="4096">4 GB</option>
+              <option value="8192" selected>8 GB</option>
+              <option value="16384">16 GB</option>
+              <option value="32768">32 GB</option>
+              <option value="65536">64 GB</option>
+            </select>
+          </div>
+
+          <div class="divider"><span class="divider-text">PORT ALLOCATION</span></div>
+          <div class="form-group">
+            <label class="form-label">Port Type</label>
+            <div class="port-selector">
+              <div class="port-option">
+                <input type="radio" name="port-type" id="port-panel" value="panel" checked>
+                <label class="port-label" for="port-panel">
+                  <span class="port-label-title">PANEL</span>
+                  <span class="port-label-desc">2000 – 5000</span>
+                </label>
+              </div>
+              <div class="port-option">
+                <input type="radio" name="port-type" id="port-mc" value="minecraft">
+                <label class="port-label" for="port-mc">
+                  <span class="port-label-title">MINECRAFT</span>
+                  <span class="port-label-desc">19110 – 20000</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-solid btn-full" id="btn-install" onclick="launchInstall()" style="margin-top:8px;font-size:14px;padding:14px;">
+            LAUNCH INSTALL
+          </button>
+        </div>
+
+        <div>
+          <div class="card mb-16">
+            <div class="flex-between mb-16">
+              <span class="card-title">Live Output</span>
+              <div class="flex gap-12">
+                <span id="install-status" class="status status-pending">● Idle</span>
+                <span id="progress-pct" style="font-family:var(--font-mono);font-size:12px;color:var(--neon);">0%</span>
+              </div>
+            </div>
+            <div class="progress-bar mb-8">
+              <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+            </div>
+            <span id="progress-label" class="text-muted" style="font-size:12px;font-family:var(--font-mono);">Waiting...</span>
+          </div>
+          <div class="terminal" id="terminal">
+            <div class="terminal-line">
+              <span class="terminal-prefix">[SYS]</span>
+              <span class="terminal-info">NEXORA Admin Installer ready.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ADD USER MODAL -->
+<div class="modal-overlay" id="add-user-modal">
+  <div class="modal">
+    <div class="modal-title">Add New User</div>
+    <form id="add-user-form" onsubmit="addMember(event)">
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input type="text" class="form-input" id="new-username" required minlength="3" placeholder="username">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" id="new-email" required placeholder="email@domain.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-input" id="new-password" required minlength="6" placeholder="min 6 chars">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Access Level</label>
+        <select class="form-input form-select" id="new-access">
+          <option value="limited">Limited (1x install)</option>
+          <option value="unlimited">Unlimited</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary" onclick="document.getElementById('add-user-modal').classList.remove('active')">Cancel</button>
+        <button type="submit" class="btn btn-solid">Create User</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal-overlay" id="success-modal">
+  <div class="modal">
+    <div class="modal-title">✓ Installation Complete</div>
+    <div class="alert alert-success" style="margin-bottom:20px;">
+      <span>Panel installed and node is active!</span>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Panel URL</label>
+      <div class="form-input" id="modal-domain">-</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Node Domain</label>
+      <div class="form-input" id="modal-node">-</div>
+    </div>
+    <div class="alert alert-warning">
+      <span>Default: <b>admin / admin</b>. Change password immediately!</span>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-solid" onclick="document.getElementById('success-modal').classList.remove('active')">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script src="js/install.js"></script>
+<script>
+  const session = requireAuth('admin');
+  if (session) {
+    renderNavUser();
+    renderAdminStats();
+    renderAdminUsers();
+    renderAdminLogs();
+    renderRecentLogs();
+    terminal.init('terminal');
+  }
+
+  function renderRecentLogs() {
+    const logs = getLogs().slice(0, 8);
+    const tbody = document.getElementById('recent-logs-body');
+    if (!tbody) return;
+    if (!logs.length) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:20px;">No activity yet</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = logs.map(l => `
+      <tr>
+        <td style="font-size:11px;color:var(--text-muted);">${formatRelative(l.timestamp)}</td>
+        <td class="mono">${l.username || '-'}</td>
+        <td class="mono">${l.ipvps || '-'}</td>
+        <td class="mono" style="font-size:12px;">${l.domainPanel || '-'}</td>
+        <td><span class="status ${l.status === 'success' ? 'status-success' : l.status === 'failed' ? 'status-error' : 'status-pending'}">${l.status}</span></td>
+      </tr>
+    `).join('');
+  }
+
+  function showSection(id) {
+    document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+    document.getElementById('section-' + id).classList.add('active');
+    document.getElementById('nav-' + id)?.classList.add('active');
+    if (id === 'users') renderAdminUsers();
+    if (id === 'logs') renderAdminLogs();
+    if (id === 'overview') { renderAdminStats(); renderRecentLogs(); }
+  }
+
+  function filterUsers(q) {
+    const search = q.toLowerCase();
+    const users = getUsers().filter(u =>
+      !search ||
+      u.username.toLowerCase().includes(search) ||
+      u.email.toLowerCase().includes(search)
+    );
+    const tbody = document.getElementById('users-body');
+    if (!users.length) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:24px;">No match</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = users.map(u => `
+      <tr>
+        <td class="mono" style="color:var(--text-muted);font-size:11px;">${u.id.slice(-8)}</td>
+        <td><span class="mono">${u.username}</span></td>
+        <td style="font-size:12px;color:var(--text-muted);">${u.email}</td>
+        <td><span class="nav-badge ${u.role === 'admin' ? 'badge-admin' : 'badge-member'}">${u.role}</span></td>
+        <td><span class="status ${u.accessLevel === 'unlimited' ? 'status-success' : 'status-pending'}">${u.accessLevel === 'unlimited' ? 'unlimited' : 'limited'}</span></td>
+        <td><span class="status ${u.status === 'active' ? 'status-success' : 'status-error'}">${u.status || 'active'}</span></td>
+        <td style="font-family:var(--font-mono);font-size:12px;">${getInstallCount(u.id)}</td>
+        <td>
+          <div class="flex gap-8">
+            ${u.role !== 'admin' ? `
+              <button class="btn btn-primary btn-sm" onclick="toggleAccess('${u.id}')">${u.accessLevel === 'unlimited' ? 'Revoke' : 'Grant'}</button>
+              <button class="btn btn-danger btn-sm" onclick="toggleSuspend('${u.id}')">${u.status === 'suspended' ? 'Unsuspend' : 'Suspend'}</button>
+            ` : '<span style="color:var(--text-muted);font-size:12px;">─</span>'}
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function clearLogs() {
+    if (!confirm('Clear all logs? This cannot be undone.')) return;
+    localStorage.removeItem(LOGS_KEY);
+    renderAdminLogs();
+    renderRecentLogs();
+    renderAdminStats();
+  }
+
+  function launchInstall() {
+    const mode = document.querySelector('input[name="install-mode"]:checked').value;
+    const portType = document.querySelector('input[name="port-type"]:checked').value;
+    startInstall({
+      ipvps: document.getElementById('input-ip').value.trim(),
+      password: document.getElementById('input-pass').value,
+      domainPanel: document.getElementById('input-domain-panel').value.trim(),
+      domainNode: document.getElementById('input-domain-node').value.trim(),
+      ramvps: document.getElementById('input-ram').value,
+      ipAlias: document.getElementById('input-alias').value.trim(),
+      portType,
+      withAlias: mode === 'alias'
+    });
+  }
+</script>
+</body>
+</html>
